@@ -47,6 +47,7 @@ impl FromStr for TomlPath {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use op::Range;
     use pretty_assertions::assert_eq;
 
     #[test]

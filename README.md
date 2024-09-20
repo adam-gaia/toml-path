@@ -113,13 +113,35 @@ cargo add toml-path
 ```
 
 ### Examples
+- High level
+The high level [get_from_file()](https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html) function offers a convienent way to quickly query toml files. The toml file is opened behind the scenes.
 ```rust
 use toml_path::get_from_file;
 
-let file = "Cargo.toml";
+let file = "./Cargo.toml";
 let tomlpath = "package.name";
 let name = get_from_file(file, tomlpath).unwrap();
 assert_eq!("toml-path", name);
 ```
 
+- Low level
+The low level [get()](https://docs.rs/toml-path/latest/toml_path/fn.get.html) function allows for greater control.
+Unlike the [get_from_file()](https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html) function, the consumer must open a toml file themselves and pass the contents as a [&toml::Value](https://docs.rs/toml/latest/toml/enum.Value.html), from the [toml](https://docs.rs/toml/latest/toml) crate.
+This allows for multiple queries of the same file without opening that file more than once.
+The output format may also be configured with [Settings](https://docs.rs/toml-path/latest/toml_path/struct.Settings.html).
+```rust
+use std::path::PathBuf;
+use std::str::FromStr;
+use std::fs;
+use toml::Value;
+use toml_path::{TomlPath, Settings, get};
 
+let file = PathBuf::from("./Cargo.toml");
+let contents = fs::read_to_string(&file).unwrap();
+let toml: Value = toml::from_str(&contents).unwrap();
+
+let toml_path = TomlPath::from_str("package.name").unwrap();
+let settings = Settings::default();
+let name = get(&toml, &toml_path, &settings).unwrap();
+assert_eq!("toml-path", name);
+```
