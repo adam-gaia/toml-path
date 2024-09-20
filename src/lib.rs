@@ -1,5 +1,4 @@
 #[doc = include_str!("../README.md")]
-
 use eyre::Result;
 use log::debug;
 use std::fs;
