@@ -200,7 +200,7 @@ fn bracket_name_list(s: &mut &str) -> PResult<Op> {
     Ok(list)
 }
 
-fn bracket_index_list(s: &mut &str) -> PResult<(Op)> {
+fn bracket_index_list(s: &mut &str) -> PResult<Op> {
     let list = separated(1.., index, comma_space)
         .map(|list| Op::BracketIndex(list))
         .parse_next(s)?;

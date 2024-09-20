@@ -1,4 +1,7 @@
+#[doc = include_str!("../README.md")]
+
 use eyre::bail;
+use std::path::PathBuf;
 use eyre::Result;
 use log::debug;
 use std::fs;
@@ -19,7 +22,7 @@ use winnow::token::take_while;
 mod toml_path;
 pub use toml_path::{Index, Op, TomlPath};
 
-pub fn traverse(value: &Value, path: &[Op]) -> Result<Value> {
+fn traverse(value: &Value, path: &[Op]) -> Result<Value> {
     let current_op = &path[0];
     let num_ops = path.len();
     match value {
@@ -184,12 +187,12 @@ pub fn get(toml: &Value, path: &TomlPath) -> Result<String> {
 }
 
 /// Convienence wrapper for 'get' to get a value directly from a file.
-pub fn get_from_file(file: &Path, path: &str) -> Result<String> {
-    let file = file.canonicalize()?;
+pub fn get_from_file<P: AsRef<Path>>(file: P, tomlpath: &str) -> Result<String> {
+    let file = fs::canonicalize(file)?;
     debug!("Reading file: {}", file.display());
     let contents = fs::read_to_string(file)?;
     let toml: Value = toml::from_str(&contents)?;
-    let toml_path = TomlPath::from_str(path)?;
+    let toml_path = TomlPath::from_str(tomlpath)?;   
     let result = get(&toml, &toml_path)?;
     Ok(result)
 }
