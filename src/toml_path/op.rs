@@ -1,7 +1,6 @@
 use eyre::bail;
 use eyre::Result;
 use std::fmt;
-use toml::{Table, Value};
 use winnow::ascii::alphanumeric1;
 use winnow::ascii::dec_int;
 use winnow::ascii::space0;
@@ -10,11 +9,7 @@ use winnow::combinator::delimited;
 use winnow::combinator::opt;
 use winnow::combinator::separated;
 use winnow::combinator::separated_pair;
-use winnow::combinator::seq;
-use winnow::error::StrContext;
-use winnow::error::StrContextValue;
 use winnow::prelude::*;
-use winnow::token::take_while;
 
 // TODO: add winnnow contexts for better error messages to all parsers
 

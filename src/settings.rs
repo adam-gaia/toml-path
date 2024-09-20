@@ -118,7 +118,7 @@ impl SettingsBuilder {
         self
     }
 
-    pub fn build(mut self) -> Settings {
+    pub fn build(self) -> Settings {
         Settings::build(self.raw_output, self.json_output, self.compact_output)
     }
 }

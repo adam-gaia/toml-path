@@ -1,22 +1,9 @@
-#[doc = include_str!("../README.md")]
-use eyre::bail;
 use eyre::Result;
 use log::debug;
 use std::fs;
 use std::path::Path;
-use std::path::PathBuf;
 use std::str::FromStr;
-use toml::{Table, Value};
-use winnow::ascii::alphanumeric1;
-use winnow::ascii::dec_int;
-use winnow::ascii::space0;
-use winnow::combinator::delimited;
-use winnow::combinator::repeat;
-use winnow::combinator::separated;
-use winnow::combinator::separated_pair;
-use winnow::combinator::seq;
-use winnow::prelude::*;
-use winnow::token::take_while;
+use toml::Value;
 
 mod toml_path;
 pub use toml_path::{Index, Op, TomlPath};

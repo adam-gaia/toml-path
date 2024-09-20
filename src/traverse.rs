@@ -1,22 +1,7 @@
-use crate::toml_path::{Index, Op, TomlPath};
+use crate::toml_path::{Index, Op};
 use eyre::bail;
 use eyre::Result;
-use log::debug;
-use std::fs;
-use std::path::Path;
-use std::path::PathBuf;
-use std::str::FromStr;
-use toml::{Table, Value};
-use winnow::ascii::alphanumeric1;
-use winnow::ascii::dec_int;
-use winnow::ascii::space0;
-use winnow::combinator::delimited;
-use winnow::combinator::repeat;
-use winnow::combinator::separated;
-use winnow::combinator::separated_pair;
-use winnow::combinator::seq;
-use winnow::prelude::*;
-use winnow::token::take_while;
+use toml::Value;
 
 pub fn traverse(value: &Value, path: &[Op]) -> Result<Value> {
     let current_op = &path[0];

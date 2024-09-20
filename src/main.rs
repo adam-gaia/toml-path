@@ -1,14 +1,11 @@
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use color_eyre::eyre::bail;
 use color_eyre::Result;
 use log::debug;
-use log::info;
 use std::fs;
 use std::io::BufRead;
-use std::io::{self, Write};
-use std::path::Path;
+use std::io::{self};
 use std::path::PathBuf;
-use toml::Table;
 use toml::Value;
 use toml_path::get;
 use toml_path::Settings;

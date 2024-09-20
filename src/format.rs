@@ -1,12 +1,5 @@
 use crate::settings::Settings;
-use crate::traverse::traverse;
-use eyre::bail;
-use eyre::Result;
 use log::debug;
-use std::fs;
-use std::path::Path;
-use std::path::PathBuf;
-use std::str::FromStr;
 use toml::{Table, Value};
 
 fn format_string(s: &str, settings: &Settings) -> String {
