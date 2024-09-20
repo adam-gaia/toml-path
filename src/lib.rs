@@ -24,9 +24,9 @@ pub fn get(toml: &Value, path: &TomlPath, settings: &Settings) -> Result<String>
     Ok(format_value(&value, &settings))
 }
 
-/// Convienence wrapper for the [get] function to get a value directly from a file.
+/// Convenience wrapper for the [get] function to get a value directly from a file.
 /// Uses default values for [Settings].
-/// For more flexability, see [get], which allows configuration at the cost of convienence.
+/// For more flexibility, see [get], which allows configuration at the cost of convenience.
 pub fn get_from_file<P: AsRef<Path>>(file: P, tomlpath: &str) -> Result<String> {
     let file = fs::canonicalize(file)?;
     debug!("Reading file: {}", file.display());

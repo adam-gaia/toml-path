@@ -24,7 +24,7 @@ in
     // {
       inherit cargoArtifacts;
     })
-# TODO: how do we constrain this codecov package to linux only without constraing the main package?
+# TODO: how do we constrain this codecov package to linux only without constraining the main package?
 #lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
 #my-crate-llvm-coverage =
 #craneLibLLvmTools.cargoLlvmCov (commonArgs

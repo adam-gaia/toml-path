@@ -22,7 +22,7 @@ struct Cli {
 
     /// Write output directly, rather than formatting as toml. Useful for displaying strings without quotes
     #[arg(short, long, group = "output_format")]
-    raw_output: bool, // TODO: should we break "jq compatibility" (not that we are in any way comatible lol) and default to true? When do I ever not pass this flag?
+    raw_output: bool, // TODO: should we break "jq compatibility" (not that we are in any way compatible lol) and default to true? When do I ever not pass this flag?
 
     /// Print output to a single line instead of pretty-printing to multiple lines
     #[arg(short, long)]

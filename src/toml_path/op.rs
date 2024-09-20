@@ -127,7 +127,7 @@ pub enum Op {
     /// Alphanumeric identifier
     Name(String),
 
-    /// List of indicies and/or index ranges
+    /// List of indices and/or index ranges
     /// [1, 2:4, 5]
     /// TODO: rename this to 'Index' or something
     BracketIndex(Vec<Index>),

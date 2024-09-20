@@ -123,7 +123,7 @@ cargo add toml-path
 ### Examples
 
 - High level
-  The high level [get_from_file()](https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html) function offers a convienent way to quickly query toml files. The toml file is opened behind the scenes.
+  The high level [get_from_file()](https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html) function offers a convenient way to quickly query toml files. The toml file is opened behind the scenes.
 
 ```rust
 use toml_path::get_from_file;

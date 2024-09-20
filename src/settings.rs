@@ -40,11 +40,11 @@ impl Settings {
             "raw: {}, json: {}, compact: {}",
             raw_output, json_output, compact_output
         );
-        // TODO: There is definitly a better way to enforce this
+        // TODO: There is definitely a better way to enforce this
         // TODO: at least note this panics in docs
         assert!(
             !(raw_output && json_output),
-            "Settings 'raw output' and 'json output' are mutualy exclusive"
+            "Settings 'raw output' and 'json output' are mutually exclusive"
         );
         Self {
             raw_output,
