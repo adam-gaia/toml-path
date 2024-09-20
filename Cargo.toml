@@ -15,7 +15,7 @@ log = "0.4.22"
 directories = "5.0.1"
 serde = { version = "1.0.210", features = ["derive"] }
 eyre = "0.6.12"
-toml = {version = "0.8.19", features = ["preserve_order", "display"] }
+toml = { version = "0.8.19", features = ["preserve_order", "display"] }
 winnow = "0.6.18"
 thiserror = "1.0.63"
 
