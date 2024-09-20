@@ -245,6 +245,10 @@ mod tests {
     #[test]
     fn test_positive_number() {
         let mut input = "1";
+        let expected = Ok(1);
+        let result = number(&mut input);
+        assert_eq!(expected, result);
+        assert_eq!("", input);
     }
 
     #[test]

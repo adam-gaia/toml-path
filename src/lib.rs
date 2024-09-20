@@ -37,16 +37,3 @@ pub fn get_from_file<P: AsRef<Path>>(file: P, tomlpath: &str) -> Result<String> 
     let result = get(&toml, &toml_path, &settings)?;
     Ok(result)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use pretty_assertions::assert_eq;
-
-    /*
-    #[test]
-    fn test_() {
-        todo!()
-    }
-    */
-}
