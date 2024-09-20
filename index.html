@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" id="oranda" class="dark">
+  <head>
+    <title>toml-path</title>
+    
+      <meta property="og:url" content="https://github.com/adam-gaia/toml-path" />
+    
+    
+      <link rel="icon" href="/rust-template/favicon.ico" />
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+      <meta name="description" content="jq for tomls (library and binary)" />
+      <meta property="og:description" content="jq for tomls (library and binary)" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="toml-path" />
+    
+    
+    
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="stylesheet" href="/rust-template/oranda-v0.6.1.css" />
+    
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-body">
+        
+          <div class="repo_banner">
+            <a href="https://github.com/adam-gaia/toml-path">
+              <div class="github-icon" aria-hidden="true"></div>
+              Check out our GitHub!
+            </a>
+          </div>
+        
+
+        <main>
+          <header>
+            
+            <h1 class="title">toml-path</h1>
+            
+  <nav class="nav">
+    <ul>
+      <li><a href="/rust-template/">Home</a></li>
+
+      
+
+      
+        <li><a href="/rust-template/artifacts/">Install</a></li>
+      
+
+      
+
+      
+
+      
+        <li><a href="/rust-template/changelog/">Changelog</a></li>
+      
+    </ul>
+  </nav>
+
+          </header>
+
+          
+
+
+    <div class="oranda-hide">
+<h1>toml-path</h1>
+</div>
+<p>jq for tomls (library and binary)</p>
+<h2>Description</h2>
+<p>The <code>toml-path</code> crate provides both a binary and a library for querying toml files. If you are familiar with <a href="https://github.com/jqlang/jq" rel="noopener noreferrer">jq</a> you already know how to use toml-path.</p>
+<h2>Language</h2>
+<p>Overview of the language. See sections <a href="#Binary" rel="noopener noreferrer">binary</a> and <a href="#Library" rel="noopener noreferrer">library</a> for more specific usage.</p>
+<h2>Binary</h2>
+<h3>Install</h3>
+<pre style="background-color:#263238;"><span style="color:#82aaff;">cargo install toml-path
+</span></pre>
+
+<h3>Examples</h3>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ toml-path '.package["name", "description"]' ./Cargo.toml
+</span><span style="color:#eeffff;">["toml-path", "jq for tomls (library and binary)"]
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Access an element by index in an array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[10, 20, 30, 40]' | toml-path '.[2]'
+</span><span style="color:#eeffff;">30
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Access a specific field in an object</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '{"name": "Alice", "age": 25}' | toml-path '.["age"]'
+</span><span style="color:#eeffff;">25
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Access elements in a nested array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[[1, 2], [3, 4], [5, 6]]' | toml-path '.[1][0]'
+</span><span style="color:#eeffff;">3
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Slice an array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[10, 20, 30, 40, 50]' | toml-path '.[1:4]'
+</span><span style="color:#eeffff;">[20, 30, 40]
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Access last element in an array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[1, 2, 3, 4, 5]' | toml-path '.[-1]'
+</span><span style="color:#eeffff;">5
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Index multiple elements from an array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[100, 200, 300, 400, 500]' | toml-path '.[0, 2, 4]'
+</span><span style="color:#eeffff;">100
+</span><span style="color:#eeffff;">300
+</span><span style="color:#eeffff;">500
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Retrieve a range of indices from an array</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[10, 20, 30, 40, 50, 60, 70]' | toml-path '.[2:6]'
+</span><span style="color:#eeffff;">[30, 40, 50, 60]
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Access nested fields in objects</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '{"user": {"name": "Bob", "address": {"city": "New York", "zip": 10001}}}' | toml-path '.user.address.city'
+</span><span style="color:#eeffff;">"New York"
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Index objects in an array of objects</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[{"id": 1, "value": "A"}, {"id": 2, "value": "B"}, {"id": 3, "value": "C"}]' | toml-path '.[1].value'
+</span><span style="color:#eeffff;">"B"
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<ul>
+<li>Indexing with string keys in an array of objects</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">$ echo '[{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]' | toml-path '.[0]["name"]'
+</span><span style="color:#eeffff;">"Alice"
+</span><span style="color:#eeffff;">
+</span></pre>
+
+<h2>Library</h2>
+<h3>Install</h3>
+<pre style="background-color:#263238;"><span style="color:#82aaff;">cargo add toml-path
+</span></pre>
+
+<h3>Examples</h3>
+<ul>
+<li>High level
+The high level <a href="https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html" rel="noopener noreferrer">get_from_file()</a> function offers a convenient way to quickly query toml files. The toml file is opened behind the scenes.</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#c792ea;">use </span><span style="color:#eeffff;">toml_path</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">get_from_file</span><span style="color:#89ddff;">;
+</span><span style="color:#eeffff;">
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> file </span><span style="color:#89ddff;">= "</span><span style="color:#c3e88d;">./Cargo.toml</span><span style="color:#89ddff;">";
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> tomlpath </span><span style="color:#89ddff;">= "</span><span style="color:#c3e88d;">package.name</span><span style="color:#89ddff;">";
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> name </span><span style="color:#89ddff;">= </span><span style="color:#82aaff;">get_from_file</span><span style="color:#89ddff;">(</span><span style="color:#eeffff;">file</span><span style="color:#89ddff;">,</span><span style="color:#eeffff;"> tomlpath</span><span style="color:#89ddff;">)</span><span style="color:#eeffff;">.</span><span style="color:#82aaff;">unwrap</span><span style="color:#89ddff;">();
+</span><span style="color:#eeffff;">assert_eq!</span><span style="color:#89ddff;">("</span><span style="color:#c3e88d;">toml-path</span><span style="color:#89ddff;">",</span><span style="color:#eeffff;"> name</span><span style="color:#89ddff;">);
+</span></pre>
+
+<ul>
+<li>Low level
+The low level <a href="https://docs.rs/toml-path/latest/toml_path/fn.get.html" rel="noopener noreferrer">get()</a> function allows for greater control.
+Unlike the <a href="https://docs.rs/toml-path/latest/toml_path/fn.get_from_file.html" rel="noopener noreferrer">get_from_file()</a> function, the consumer must open a toml file themselves and pass the contents as a <a href="https://docs.rs/toml/latest/toml/enum.Value.html" rel="noopener noreferrer">&amp;toml::Value</a>, from the <a href="https://docs.rs/toml/latest/toml" rel="noopener noreferrer">toml</a> crate.
+This allows for multiple queries of the same file without opening that file more than once.
+The output format may also be configured with <a href="https://docs.rs/toml-path/latest/toml_path/struct.Settings.html" rel="noopener noreferrer">Settings</a>.</li>
+</ul>
+<pre style="background-color:#263238;"><span style="color:#c792ea;">use </span><span style="color:#eeffff;">std</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">path</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">PathBuf</span><span style="color:#89ddff;">;
+</span><span style="color:#c792ea;">use </span><span style="color:#eeffff;">std</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">str</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">FromStr</span><span style="color:#89ddff;">;
+</span><span style="color:#c792ea;">use </span><span style="color:#eeffff;">std</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">fs</span><span style="color:#89ddff;">;
+</span><span style="color:#c792ea;">use </span><span style="color:#eeffff;">toml</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">Value</span><span style="color:#89ddff;">;
+</span><span style="color:#c792ea;">use </span><span style="color:#eeffff;">toml_path</span><span style="color:#89ddff;">::{</span><span style="color:#eeffff;">TomlPath</span><span style="color:#89ddff;">,</span><span style="color:#eeffff;"> Settings</span><span style="color:#89ddff;">,</span><span style="color:#eeffff;"> get</span><span style="color:#89ddff;">};
+</span><span style="color:#eeffff;">
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> file </span><span style="color:#89ddff;">= </span><span style="color:#eeffff;">PathBuf</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">from</span><span style="color:#89ddff;">("</span><span style="color:#c3e88d;">./Cargo.toml</span><span style="color:#89ddff;">");
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> contents </span><span style="color:#89ddff;">= </span><span style="color:#eeffff;">fs</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">read_to_string</span><span style="color:#89ddff;">(&amp;</span><span style="color:#eeffff;">file</span><span style="color:#89ddff;">)</span><span style="color:#eeffff;">.</span><span style="color:#82aaff;">unwrap</span><span style="color:#89ddff;">();
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> toml</span><span style="color:#89ddff;">:</span><span style="color:#eeffff;"> Value </span><span style="color:#89ddff;">= </span><span style="color:#eeffff;">toml</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">from_str</span><span style="color:#89ddff;">(&amp;</span><span style="color:#eeffff;">contents</span><span style="color:#89ddff;">)</span><span style="color:#eeffff;">.</span><span style="color:#82aaff;">unwrap</span><span style="color:#89ddff;">();
+</span><span style="color:#eeffff;">
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> toml_path </span><span style="color:#89ddff;">= </span><span style="color:#eeffff;">TomlPath</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">from_str</span><span style="color:#89ddff;">("</span><span style="color:#c3e88d;">package.name</span><span style="color:#89ddff;">")</span><span style="color:#eeffff;">.</span><span style="color:#82aaff;">unwrap</span><span style="color:#89ddff;">();
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> settings </span><span style="color:#89ddff;">= </span><span style="color:#eeffff;">Settings</span><span style="color:#89ddff;">::</span><span style="color:#eeffff;">default</span><span style="color:#89ddff;">();
+</span><span style="font-style:italic;color:#c792ea;">let</span><span style="color:#eeffff;"> name </span><span style="color:#89ddff;">= </span><span style="color:#82aaff;">get</span><span style="color:#89ddff;">(&amp;</span><span style="color:#eeffff;">toml</span><span style="color:#89ddff;">, &amp;</span><span style="color:#eeffff;">toml_path</span><span style="color:#89ddff;">, &amp;</span><span style="color:#eeffff;">settings</span><span style="color:#89ddff;">)</span><span style="color:#eeffff;">.</span><span style="color:#82aaff;">unwrap</span><span style="color:#89ddff;">();
+</span><span style="color:#eeffff;">assert_eq!</span><span style="color:#89ddff;">("</span><span style="color:#c3e88d;">toml-path</span><span style="color:#89ddff;">",</span><span style="color:#eeffff;"> name</span><span style="color:#89ddff;">);
+</span></pre>
+
+
+
+
+        </main>
+      </div>
+
+      <footer>
+        
+          <a href="https://github.com/adam-gaia/toml-path"><div class="github-icon" aria-hidden="true"></div></a>
+        
+        <span>
+          toml-path, MIT OR Apache-2.0
+        </span>
+      </footer>
+    </div>
+
+    
+    
+
+    
+
+    <script src="/rust-template/artifacts.js"></script>
+
+
+  </body>
+</html>
