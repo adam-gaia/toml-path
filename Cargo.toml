@@ -1,0 +1,46 @@
+[package]
+name = "toml-path"
+description = "jq for tomls"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = "https://github.com/adam-gaia/toml-path"
+repository = "https://github.com/adam-gaia/toml-path"
+
+[dependencies]
+clap = { version = "4.5.9", features = ["derive"] }
+color-eyre = "0.6.3"
+env_logger = "0.11.3"
+log = "0.4.22"
+directories = "5.0.1"
+serde = { version = "1.0.210", features = ["derive"] }
+eyre = "0.6.12"
+toml = {version = "0.8.19", features = ["preserve_order", "display"] }
+winnow = "0.6.18"
+thiserror = "1.0.63"
+
+[dev-dependencies]
+pretty_assertions = "1.4.1"
+trycmd = "0.15.7"
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.19.1"
+# CI backends to support
+ci = "github"
+# The installers to generate for each app
+installers = ["shell"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["x86_64-unknown-linux-gnu"]
+# Publish jobs to run in CI
+pr-run-mode = "plan"
+# Path that installers should place binaries in
+install-path = "CARGO_HOME"
+# Whether to install an updater program
+install-updater = false
