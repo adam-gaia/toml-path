@@ -11,9 +11,8 @@ use std::path::PathBuf;
 use toml::Table;
 use toml::Value;
 use toml_path::get;
+use toml_path::Settings;
 use toml_path::TomlPath;
-
-// TODO: add tests in README with trycmd
 
 #[derive(Debug, Parser)]
 #[command(version, about, long_about=None)]
@@ -23,7 +22,18 @@ struct Cli {
 
     /// Toml file to process. Toml content is read from stdin if omitted
     file: Option<PathBuf>,
-    // TODO: add args like jq's '--raw-input' and '--raw-output'
+
+    /// Write output directly, rather than formatting as toml. Useful for displaying strings without quotes
+    #[arg(short, long, group = "output_format")]
+    raw_output: bool, // TODO: should we break "jq compatibility" (not that we are in any way comatible lol) and default to true? When do I ever not pass this flag?
+
+    /// Print output to a single line instead of pretty-printing to multiple lines
+    #[arg(short, long)]
+    compact_output: bool,
+
+    /// Output as json
+    #[arg(short, long, group = "output_format")]
+    json_output: bool, // TODO: add more flags like jq
 }
 
 fn main() -> Result<()> {
@@ -31,6 +41,14 @@ fn main() -> Result<()> {
     env_logger::init();
 
     let args = Cli::parse();
+    debug!("args: {:?}", args);
+
+    let settings = Settings::builder()
+        .raw_output(args.raw_output)
+        .compact_output(args.compact_output)
+        .json_output(args.json_output)
+        .build();
+    debug!("settings: {:?}", settings);
 
     let input = match args.file {
         Some(file) => {
@@ -57,7 +75,7 @@ fn main() -> Result<()> {
     };
 
     let toml: Value = toml::from_str(&input)?;
-    let result = get(&toml, &args.path)?;
+    let result = get(&toml, &args.path, &settings)?;
     println!("{}", result);
 
     Ok(())

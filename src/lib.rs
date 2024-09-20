@@ -1,11 +1,10 @@
 #[doc = include_str!("../README.md")]
-
 use eyre::bail;
-use std::path::PathBuf;
 use eyre::Result;
 use log::debug;
 use std::fs;
 use std::path::Path;
+use std::path::PathBuf;
 use std::str::FromStr;
 use toml::{Table, Value};
 use winnow::ascii::alphanumeric1;
@@ -22,178 +21,32 @@ use winnow::token::take_while;
 mod toml_path;
 pub use toml_path::{Index, Op, TomlPath};
 
-fn traverse(value: &Value, path: &[Op]) -> Result<Value> {
-    let current_op = &path[0];
-    let num_ops = path.len();
-    match value {
-        Value::String(string) => {
-            if num_ops > 1 {
-                bail!(
-                    "Hit the end of toml tree (string: '{}') but path has more parts left: {:?}",
-                    string,
-                    path[1..].to_vec()
-                );
-            }
-            return Ok(value.clone());
-        }
-        Value::Integer(int) => {
-            if num_ops > 1 {
-                bail!(
-                    "Hit the end of toml tree (integer: {}) but path has more parts left: {:?}",
-                    int,
-                    path[1..].to_vec()
-                );
-            }
-            return Ok(value.clone());
-        }
-        Value::Float(float) => {
-            if num_ops > 1 {
-                bail!(
-                    "Hit the end of toml tree (float: {}) but path has more parts left: {:?}",
-                    float,
-                    path[1..].to_vec()
-                );
-            }
-            return Ok(value.clone());
-        }
-        Value::Boolean(bool) => {
-            if num_ops > 1 {
-                bail!(
-                    "Hit the end of toml tree (bool: {}) but path has more parts left: {:?}",
-                    bool,
-                    path[1..].to_vec()
-                );
-            }
-            return Ok(value.clone());
-        }
-        Value::Datetime(date) => {
-            if num_ops > 1 {
-                bail!(
-                    "Hit the end of toml tree (datetime: '{}') but path has more parts left: {:?}",
-                    date,
-                    path[1..].to_vec()
-                );
-            }
-            return Ok(value.clone());
-        }
-        Value::Array(array) => match current_op {
-            Op::Dot => {
-                if num_ops == 1 {
-                    return Ok(value.clone());
-                }
-                return traverse(&value, &path[1..]);
-            }
-            Op::Name(name) => {
-                bail!("Cannot index array with string ({:?})", name);
-            }
-            Op::BracketIndex(indexes) => {
-                let num_items = array.len();
-                let mut filtered_values: Vec<Value> = Vec::new();
-                for index in indexes {
-                    match index {
-                        Index::Number(i_signed) => {
-                            let i_unsigned = if *i_signed < 1 {
-                                (num_items as isize + i_signed) as usize
-                            } else {
-                                *i_signed as usize
-                            };
-                            let Some(item) = array.get(i_unsigned) else {
-                                bail!("No item at index {} in array ({:?})", i_unsigned, array);
-                            };
-                            filtered_values.push(item.clone());
-                        }
-                        Index::Range(range) => {
-                            for i in range.gen_range_indexes(num_items)? {
-                                let Some(item): Option<&Value> = array.get(i) else {
-                                    bail!(
-                                        "No item at index {} (from range {:?}) in array ({:?})",
-                                        i,
-                                        range,
-                                        array
-                                    );
-                                };
-                                filtered_values.push(item.clone());
-                            }
-                        }
-                    }
-                }
-                let subset = Value::Array(filtered_values);
-                if num_ops == 1 {
-                    return Ok(subset);
-                }
-                return traverse(&subset, &path[1..]);
-            }
-            Op::BracketName(names) => {
-                bail!("Cannot index array with strings ({:?})", names);
-            }
-        },
-        Value::Table(table) => match current_op {
-            Op::Dot => {
-                if num_ops == 1 {
-                    return Ok(value.clone());
-                }
-                return traverse(&value, &path[1..]);
-            }
-            Op::Name(name) => {
-                let Some(section) = table.get(name) else {
-                    bail!("Could not find key '{:?}' in table ({:?})", name, table);
-                };
-                if num_ops == 1 {
-                    return Ok(section.clone());
-                }
-                return traverse(section, &path[1..]);
-            }
-            Op::BracketIndex(indexes) => {
-                bail!("Cannot index table with indexes ({:?})", indexes)
-            }
-            Op::BracketName(names) => {
-                let mut filtered_values: Vec<Value> = Vec::new();
+mod traverse;
+use traverse::traverse;
 
-                for name in names {
-                    let Some(section) = table.get(name) else {
-                        bail!(
-                            "Could not find key '{:?}' (from keys ({:?}) in table ({:?})",
-                            name,
-                            names,
-                            table
-                        );
-                    };
-                    filtered_values.push(section.clone());
-                }
+mod settings;
+pub use settings::Settings;
 
-                let subset = Value::Array(filtered_values);
-                if num_ops == 1 {
-                    return Ok(subset);
-                }
-                return traverse(&subset, &path[1..]);
-            }
-        },
-    }
-}
+mod format;
+use format::format_value;
 
 /// Get value(s) specified by a tomlpath from a toml
-pub fn get(toml: &Value, path: &TomlPath) -> Result<String> {
+pub fn get(toml: &Value, path: &TomlPath, settings: &Settings) -> Result<String> {
     let value = traverse(&toml, &path.parts())?;
-    debug!("type: {}", value.type_str());
-    let s = match value {
-        Value::Table(ref t) => toml::to_string(&value)?,
-        _ => {
-            let mut s = String::new();
-            serde::Serialize::serialize(&value, toml::ser::ValueSerializer::new(&mut s))?;
-            s
-        }
-    };
-    Ok(s)
+    Ok(format_value(&value, &settings))
 }
 
-/// Convienence wrapper for 'get' to get a value directly from a file.
+/// Convienence wrapper for the [get] function to get a value directly from a file.
+/// Uses default values for [Settings].
+/// For more flexability, see [get], which allows configuration at the cost of convienence.
 pub fn get_from_file<P: AsRef<Path>>(file: P, tomlpath: &str) -> Result<String> {
     let file = fs::canonicalize(file)?;
     debug!("Reading file: {}", file.display());
     let contents = fs::read_to_string(file)?;
     let toml: Value = toml::from_str(&contents)?;
-    let toml_path = TomlPath::from_str(tomlpath)?;   
-    let result = get(&toml, &toml_path)?;
+    let toml_path = TomlPath::from_str(tomlpath)?;
+    let settings = Settings::default();
+    let result = get(&toml, &toml_path, &settings)?;
     Ok(result)
 }
 
