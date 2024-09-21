@@ -6,6 +6,7 @@
   crateBuilder = inputs.self.lib.mkCrateBuilder pkgs;
   craneLib = crateBuilder.craneLib;
   lib = crateBuilder.lib;
+  commonArgs = crateBuilder.commonArgs;
 
   # Treefmt doesn't easily expose the programs with out its flake-parts module (as far as I can tell)
   # This snipit, modified from their default.nix, lets us grab the programs after building with our treefmt config
@@ -29,14 +30,19 @@ in
           rust-analyzer
           cargo-limit
           cargo-nextest
+          cargo-dist
           just
           bacon
-          cargo-dist
           oranda
-          treefmt-bin
           typos
           perSystem.cargo-nextest-xdg.default
-        ] ++ craneToolchain ++ treefmt-programs;
+        ]
+          # Include the extra packages we use to build our crate
+          ++ commonArgs.buildInputs
+          # Include crane's toolchain (cargo, clippy, rustfmt, etc)
+          ++ craneToolchain
+          # Include treefmt and formatters
+          ++ treefmt-programs ++ [ treefmt-bin] ;
 
         enterShell = ''
           just --list
