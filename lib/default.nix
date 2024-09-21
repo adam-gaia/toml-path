@@ -8,15 +8,16 @@
     craneLib = inputs.crane.mkLib pkgs;
 
     src = let
-        # This crate includes the README.md in the api docs. We need to include the readme.md
-        # See https://crane.dev/source-filtering.html
-        markdownFilter = path: _type: builtins.match ".*md$" path != null;
-        markdownOrCargo = path: type: (markdownFilter path type) || (craneLib.filterCargoSources path type);
-    in lib.cleanSourceWith {
-      src = ../.; # The original, unfiltered source
-      filter = markdownOrCargo;
-      name = "source"; # Be reproducible, regardless of the directory name
-    };
+      # This crate includes the README.md in the api docs. We need to include the readme.md
+      # See https://crane.dev/source-filtering.html
+      markdownFilter = path: _type: builtins.match ".*md$" path != null;
+      markdownOrCargo = path: type: (markdownFilter path type) || (craneLib.filterCargoSources path type);
+    in
+      lib.cleanSourceWith {
+        src = ../.; # The original, unfiltered source
+        filter = markdownOrCargo;
+        name = "source"; # Be reproducible, regardless of the directory name
+      };
 
     #src = craneLib.cleanCargoSource ../.;
 
