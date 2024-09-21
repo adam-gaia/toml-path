@@ -830,15 +830,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1726646204,
-        "narHash": "sha256-Ftjw+30n/HeFxtvw/c0+hzT6d3kbwPnGruhbrKnbwOI=",
-        "owner": "numtide",
+        "lastModified": 1726888056,
+        "narHash": "sha256-gplorAc0ISAUPemUNOnRUs7jr3WiLiHZb3DJh++IkZs=",
+        "owner": "adam-gaia",
         "repo": "treefmt-nix",
-        "rev": "41266e63a00c55b488f8f977051d4bd20e77f644",
+        "rev": "512932ea22c6d21512d7902676977fb57737adea",
         "type": "github"
       },
       "original": {
-        "owner": "numtide",
+        "owner": "adam-gaia",
+        "ref": "typos",
         "repo": "treefmt-nix",
         "type": "github"
       }

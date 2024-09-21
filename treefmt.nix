@@ -8,5 +8,6 @@
     jsonfmt.enable = true;
     yamlfmt.enable = true;
     taplo.enable = true; # Toml formatter
+    typos.enable = true;
   };
 }
